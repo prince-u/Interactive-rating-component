@@ -1,12 +1,13 @@
 import img from "./images/illustration-thank-you.svg";
 
-const ThankYouPage = ({ rating }) => {
+const ThankYouPage = () => {
+  let selection = localStorage.getItem("choice");
   return (
     <div className="card thank-you-card">
       <div className="phone-icon">
         <img src={img} alt="" />
       </div>
-      <div className="review">you selected {rating} out of 5</div>
+      <div className="review">you selected {selection} out of 5</div>
       <div className="txt">
         <h1>Thank you!</h1>
         <p>

@@ -1,27 +1,7 @@
-const Ratings = ({ num, updateState }) => {
-  function handleClick(e) {
-    let selected = e.target;
-    selected.classList.toggle("active");
-    selected.classList.toggle("hover");
-    selected.classList.contains("active")
-      ? updateState(selected.id)
-      : updateState(null);
+import handleSelect from "./handleSelect";
+import handleHover from "./handleHover";
 
-    let allNumbers = Array.from(document.querySelectorAll(".number"));
-    let unselectedNumbers = allNumbers.filter((number) => number !== e.target);
-    unselectedNumbers.forEach((number) => {
-      number.classList.remove("active");
-    });
-  }
-  function handleHover(mouseState, e) {
-    let hovered = e.target;
-    if (mouseState === "entering") {
-      if (hovered.classList.contains("active")) return;
-      hovered.classList.add("hover");
-    } else if (mouseState === "leaving") {
-      hovered.classList.remove("hover");
-    }
-  }
+const Ratings = ({ num, choice }) => {
   let ratings = [];
   for (let i = 1; i < num + 1; i++) {
     let item = (
@@ -29,7 +9,9 @@ const Ratings = ({ num, updateState }) => {
         className="number"
         onMouseEnter={(e) => handleHover("entering", e)}
         onMouseLeave={(e) => handleHover("leaving", e)}
-        onClick={handleClick}
+        onClick={(e) => {
+          handleSelect(e, choice);
+        }}
         key={i}
         id={i}
       >

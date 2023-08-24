@@ -1,43 +1,30 @@
-import { Link } from "react-router-dom";
-import Ratings from "./ratings";
-import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import Ratings from "./Ratings";
+import { useRef, useEffect } from "react";
 import img from "./images/icon-star.svg";
-import logger from "./new.js";
+import ClassListModifier from "./ClassListModifier.js";
+import popUpHandler from "./popUpHandler";
 
-function Home({ handleChoice }) {
-  logger("Hello world");
-  const [State, setState] = useState(null);
-  function updateState(id) {
-    setState(id);
-  }
-  function addClass(element, elementClass) {
-    document.querySelector(element).classList.add(elementClass);
-  }
-  function removeClass(element, elementClass) {
-    document.querySelector(element).classList.remove(elementClass);
-  }
+const { addClass, removeClass, containsClass } = ClassListModifier;
 
-  let timer;
-  function handlePopUp() {
-    if (document.querySelector(".pop-up").classList.contains("active")) {
-      clearTimeout(timer);
-    } else {
-      addClass(".pop-up", "active");
-      removeClass("button", "hover");
+function Home() {
+  const choice = useRef(null);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (localStorage.getItem("choice") != null) {
+      let prevChoice = localStorage.getItem("choice");
+      choice.current = prevChoice;
+      document
+        .querySelector(".number:nth-child(" + choice.current + ")")
+        .classList.add("active");
     }
-    timer = setTimeout(() => {
-      removeClass(".pop-up", "active");
-      addClass("button", "hover");
-      console.log("setTimeout called");
-    }, 3000);
-  }
+  }, [location]);
   function handleSubmit(e) {
-    if (State) {
-      handleChoice(State);
-      setState(null);
-    } else {
+    if (!choice.current) {
       e.preventDefault();
-      handlePopUp(e);
+      popUpHandler();
     }
   }
   return (
@@ -55,7 +42,7 @@ function Home({ handleChoice }) {
       </div>
 
       <div className="ratings">
-        <Ratings updateState={updateState} num={5} />
+        <Ratings choice={choice} num={5} />
       </div>
       <Link to="Thank you page">
         <button
@@ -63,12 +50,11 @@ function Home({ handleChoice }) {
             handleSubmit(e);
           }}
           onMouseEnter={(e) => {
-            if (document.querySelector(".pop-up").classList.contains("active"))
-              return;
-            e.target.classList.add("hover");
+            if (containsClass(".pop-up", "active")) return;
+            addClass(e.target, "hover");
           }}
           onMouseLeave={(e) => {
-            e.target.classList.remove("hover");
+            removeClass(e.target, "hover");
           }}
         >
           submit
